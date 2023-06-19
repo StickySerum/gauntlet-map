@@ -1,2 +1,2 @@
-# Gauntlet-Map
-A plugin for RuneLite that adds a real time map for the current instance of The Gauntlet
+# Gauntlet Map
+A map of The Gauntlet that updates in real time without needing to open the map interface. It will show where the demi boss rooms are located on the map and display which demi boss spawned in which room.
