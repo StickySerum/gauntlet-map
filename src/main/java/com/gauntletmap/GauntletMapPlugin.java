@@ -71,6 +71,10 @@ public class GauntletMapPlugin extends Plugin
 
 	@Getter
 	@Setter
+	private List<Integer> activeDemiBossRooms = new ArrayList<>();
+
+	@Getter
+	@Setter
 	private Integer startLocation;
 
 	@Getter
@@ -137,6 +141,7 @@ public class GauntletMapPlugin extends Plugin
 			WorldPoint player = client.getLocalPlayer().getWorldLocation();
 			setDemiBoss(true);
 			setDemiBossRoom(calculateActivatedRoom(player, getCenterTileMap().get(getCurrentRoom())));
+			getActiveDemiBossRooms().add(getDemiBossRoom());
 
 			switch (npcSpawned.getNpc().getId())
 			{
@@ -171,18 +176,19 @@ public class GauntletMapPlugin extends Plugin
 			npcDespawned.getNpc().getId() == NpcID.CRYSTALLINE_BEAR)
 		{
 			setDemiBoss(false);
-
 			WorldPoint npc = npcDespawned.getNpc().getWorldLocation();
-			int[] rooms = {3, 4, 5, 15, 22, 29, 21, 28, 35, 45, 46, 47};
 
-			for (int i = 0; i <= rooms.length; i++)
+			for (int room : getActiveDemiBossRooms())
 			{
-				if (getRoomTilesMap().get(rooms[i]).contains(npc))
+				if (getRoomTilesMap().get(room).contains(npc))
 				{
-					panel.addNewActiveTile(rooms[i]);
+					if (!getRoomTilesMap().get(room).contains(client.getLocalPlayer().getWorldLocation()))
+					{
+						panel.addNewActiveTile(room);
+						return;
+					}
 				}
 			}
-
 		}
 	}
 
@@ -215,7 +221,9 @@ public class GauntletMapPlugin extends Plugin
 		//Confirm not first load && update map panel
 		if (gameStateChanged.getGameState() == GameState.LOADING && client.isInInstancedRegion() && !firstLoad)
 		{
-			panel.addNewActiveTile(calculateActivatedRoom(client.getLocalPlayer().getWorldLocation(), getCenterTileMap().get(getCurrentRoom())));
+			int activatedRoom = calculateActivatedRoom(client.getLocalPlayer().getWorldLocation(), getCenterTileMap().get(getCurrentRoom()));
+
+			panel.addNewActiveTile(activatedRoom);
 		}
 
 		if (gameStateChanged.getGameState() == GameState.LOGIN_SCREEN)

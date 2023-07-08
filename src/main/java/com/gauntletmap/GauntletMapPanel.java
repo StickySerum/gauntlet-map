@@ -182,7 +182,6 @@ public class GauntletMapPanel extends PluginPanel
 		if (config.showDemiBosses() && demiIcon)
 		{
 			String path = type + "demi" + getTileTypeMap().get(room);
-			System.out.println(path);
 			BufferedImage demiRoom = ImageUtil.loadImageResource(GauntletMapPlugin.class, path);
 			add(new JLabel(new ImageIcon(demiRoom)), c, room - 1);
 			return;
