@@ -1,19 +1,14 @@
-package com.gauntletmap;
+package net.runelite.client.plugins.gauntletmap;
 
 import com.google.inject.Provides;
-import java.awt.image.BufferedImage;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+
 import javax.inject.Inject;
+
 import lombok.Getter;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import net.runelite.api.Client;
-import net.runelite.api.NpcID;
+import net.runelite.api.*;
 import net.runelite.api.coords.WorldPoint;
+import net.runelite.api.events.GameObjectDespawned;
 import net.runelite.api.events.GameObjectSpawned;
 import net.runelite.api.events.GameStateChanged;
 import net.runelite.api.events.GameTick;
@@ -28,6 +23,10 @@ import net.runelite.client.ui.NavigationButton;
 import net.runelite.client.ui.overlay.OverlayManager;
 import net.runelite.client.util.ImageUtil;
 
+import java.awt.image.BufferedImage;
+import java.util.*;
+import java.util.List;
+
 @Slf4j
 @PluginDescriptor(
 	name = "Gauntlet Map"
@@ -36,6 +35,7 @@ import net.runelite.client.util.ImageUtil;
 public class GauntletMapPlugin extends Plugin
 {
 	private static final Integer CORRUPTED_GAUNTLET_REGION_ID = 7768;
+
 	private static final Integer GAUNTLET_REGION_ID = 7512;
 
 	@Inject
@@ -62,12 +62,8 @@ public class GauntletMapPlugin extends Plugin
 	@Inject
 	private GauntletMapGuide guideOverlay;
 
-	@Getter
-	@Setter
 	private Map<Integer, String> fileNameMap;
 
-	@Getter
-	@Setter
 	private Map<Integer, List<Integer>> connectedRoomsMap;
 
 	private NavigationButton navButton;
@@ -92,7 +88,7 @@ public class GauntletMapPlugin extends Plugin
 
 		overlayManager.add(mapOverlay);
 
-//		overlayManager.add(guideOverlay);
+		overlayManager.add(guideOverlay);
 	}
 
 	@Override
@@ -100,8 +96,6 @@ public class GauntletMapPlugin extends Plugin
 	{
 		clientToolbar.removeNavigation(navButton);
 	}
-
-	//NEED TO CHECK THESE METHODS FOR CHANGES @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 	@Subscribe
 	public void onNpcSpawned(NpcSpawned npcSpawned)
@@ -116,9 +110,10 @@ public class GauntletMapPlugin extends Plugin
 		switch (npcSpawned.getNpc().getId())
 		{
 			case NpcID.CORRUPTED_HUNLLEF:
-				this.session.setCorrupted(true);
+				session.setCorrupted(true);
 			case NpcID.CRYSTALLINE_HUNLLEF:
-				this.session.hunllefSpawned(player, npcSpawned.getActor().getWorldLocation());
+				session.hunllefSpawned(player, npcSpawned.getActor().getWorldLocation());
+				break;
 
 			case NpcID.CORRUPTED_BEAR:
 			case NpcID.CRYSTALLINE_BEAR:
@@ -126,7 +121,7 @@ public class GauntletMapPlugin extends Plugin
 			case NpcID.CRYSTALLINE_DARK_BEAST:
 			case NpcID.CORRUPTED_DRAGON:
 			case NpcID.CRYSTALLINE_DRAGON:
-				this.session.updateDemiBossLocations(player, npcSpawned.getNpc());
+				session.updateDemiBossLocations(player, npcSpawned.getNpc());
 				break;
 		}
 	}
@@ -149,7 +144,7 @@ public class GauntletMapPlugin extends Plugin
 			case NpcID.CRYSTALLINE_DARK_BEAST:
 			case NpcID.CORRUPTED_DRAGON:
 			case NpcID.CRYSTALLINE_DRAGON:
-				this.session.updateDemiBossLocations(player, npcDespawned.getNpc());
+				session.updateDemiBossLocations(player, npcDespawned.getNpc());
 				break;
 		}
 	}
@@ -157,7 +152,7 @@ public class GauntletMapPlugin extends Plugin
 	@Subscribe
 	public void onGameStateChanged(GameStateChanged gameStateChanged)
 	{
-		this.session.gameStateChanged(gameStateChanged, client);
+		session.gameStateChanged(gameStateChanged, client);
 	}
 
 	@Subscribe
@@ -169,12 +164,12 @@ public class GauntletMapPlugin extends Plugin
 			return;
 		}
 
-		if (this.session.isNewSession())
+		if (session.isNewSession())
 		{
 			return;
 		}
 
-		this.session.updateCurrentRoom(client.getLocalPlayer().getWorldLocation());
+		session.updateCurrentRoom(client.getLocalPlayer().getWorldLocation());
 	}
 
 	@Subscribe
@@ -185,7 +180,18 @@ public class GauntletMapPlugin extends Plugin
 			return;
 		}
 
-		this.session.gameObjectSpawned(gameObjectSpawned.getGameObject().getId(), gameObjectSpawned.getGameObject());
+		session.gameObjectSpawned(gameObjectSpawned.getGameObject());
+	}
+
+	@Subscribe
+	public void onGameObjectDespawned(GameObjectDespawned gameObjectDespawned)
+	{
+		if (!client.isInInstancedRegion() || isNotInGauntlet())
+		{
+			return;
+		}
+
+		session.gameObjectDespawned(gameObjectDespawned.getGameObject());
 	}
 
 	private void createStartingMaps()
@@ -193,69 +199,69 @@ public class GauntletMapPlugin extends Plugin
 		Map<Integer, String> fileNameMap = new TreeMap<>();
 		Map<Integer, List<Integer>> connectedRoomsMap = new TreeMap<>();
 
-		for (int i = 1; i <= 49; i++)
+		for (int room = 1; room <= 49; room++)
 		{
 			List<Integer> connectedRoomsList = new ArrayList<>();
 
-			switch (i)
+			switch (room)
 			{
 				case 1:
 					connectedRoomsList.addAll(Arrays.asList(2, 8));
-					fileNameMap.put(i, "_top_left.png");
+					fileNameMap.put(room, "_top_left.png");
 					break;
 				case 7:
 					connectedRoomsList.addAll(Arrays.asList(6, 14));
-					fileNameMap.put(i, "_top_right.png");
+					fileNameMap.put(room, "_top_right.png");
 					break;
 				case 43:
 					connectedRoomsList.addAll(Arrays.asList(36, 44));
-					fileNameMap.put(i, "_bottom_left.png");
+					fileNameMap.put(room, "_bottom_left.png");
 					break;
 				case 49:
 					connectedRoomsList.addAll(Arrays.asList(42, 48));
-					fileNameMap.put(i, "_bottom_right.png");
+					fileNameMap.put(room, "_bottom_right.png");
 					break;
 				case 8:
 				case 15:
 				case 22:
 				case 29:
 				case 36:
-					connectedRoomsList.addAll(Arrays.asList(i - 7, i + 1, i + 7));
-					fileNameMap.put(i, "_left.png");
+					connectedRoomsList.addAll(Arrays.asList(room - 7, room + 1, room + 7));
+					fileNameMap.put(room, "_left.png");
 					break;
 				case 14:
 				case 21:
 				case 28:
 				case 35:
 				case 42:
-					connectedRoomsList.addAll(Arrays.asList(i - 7, i - 1, i + 7));
-					fileNameMap.put(i, "_right.png");
+					connectedRoomsList.addAll(Arrays.asList(room - 7, room - 1, room + 7));
+					fileNameMap.put(room, "_right.png");
 					break;
 				case 2:
 				case 3:
 				case 4:
 				case 5:
 				case 6:
-					connectedRoomsList.addAll(Arrays.asList(i - 1, i + 1, i + 7));
-					fileNameMap.put(i, "_top.png");
+					connectedRoomsList.addAll(Arrays.asList(room - 1, room + 1, room + 7));
+					fileNameMap.put(room, "_top.png");
 					break;
 				case 44:
 				case 45:
 				case 46:
 				case 47:
 				case 48:
-					connectedRoomsList.addAll(Arrays.asList(i - 7, i - 1, i + 1));
-					fileNameMap.put(i, "_bottom.png");
+					connectedRoomsList.addAll(Arrays.asList(room - 7, room - 1, room + 1));
+					fileNameMap.put(room, "_bottom.png");
 					break;
 				default:
-					connectedRoomsList.addAll(Arrays.asList(i - 7, i - 1, i + 1, i + 7));
-					fileNameMap.put(i, ".png");
+					connectedRoomsList.addAll(Arrays.asList(room - 7, room - 1, room + 1, room + 7));
+					fileNameMap.put(room, ".png");
 					break;
 			}
-			connectedRoomsMap.put(i, connectedRoomsList);
+			connectedRoomsMap.put(room, connectedRoomsList);
 		}
-		setFileNameMap(fileNameMap);
-		setConnectedRoomsMap(connectedRoomsMap);
+		this.fileNameMap = fileNameMap;
+		this.connectedRoomsMap = connectedRoomsMap;
 	}
 
 	private boolean isNotInGauntlet()

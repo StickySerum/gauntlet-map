@@ -1,4 +1,4 @@
-package com.gauntletmap;
+package net.runelite.client.plugins.gauntletmap;
 
 import com.google.inject.Inject;
 import java.awt.Color;
@@ -35,13 +35,11 @@ public class GauntletMapGuide extends Overlay
 	{
 		//SAVE GAME OBJECT AFTER SPAWNING, CALL IT HERE
 
-		for (Map.Entry<Integer, List<GameObject>> entry : session.getHighlightNodeMap().entrySet())
-		{
-			for (GameObject gameObject : entry.getValue())
-			{
-				modelOutlineRenderer.drawOutline(gameObject, 1, Color.YELLOW, 1);
-			}
-		}
+//		session.getHighlightNodeMap().forEach((room, gameObjectList) ->
+//		{
+//			gameObjectList.forEach(gameObject -> modelOutlineRenderer.drawOutline(gameObject, 5, Color.YELLOW, 1));
+//		});
+
 	}
 
 

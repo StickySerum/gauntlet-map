@@ -1,5 +1,6 @@
-package com.gauntletmap;
+package net.runelite.client.plugins.gauntletmap;
 
+import java.util.List;
 import net.runelite.client.config.Config;
 import net.runelite.client.config.ConfigGroup;
 import net.runelite.client.config.ConfigItem;
@@ -49,37 +50,50 @@ public interface GauntletMapConfig extends Config
 	@Range(min = 1, max = 100)
 	default int overlayOpacityPercentage() { return 100; }
 
+//	@ConfigSection(
+//		name = "Map guide options",
+//		description = "Settings for map guiding and highlighting in the Gauntlet",
+//		position = 2
+//	)
+//	String guideStyleSelection = "guideStyleSelection";
+
+//	@ConfigItem(
+//		position = 0,
+//		keyName = "showGuide",
+//		name = "Show map guide",
+//		description = "This will display guides to the rooms you choose",
+//		section = guideStyleSelection
+//	)
+//	default boolean useGuide() { return false; }
+
 	@ConfigSection(
-		name = "Map guide options",
-		description = "Settings for map guiding and highlighting in the Gauntlet",
+		name = "Resource display options",
+		description = "Settings for showing resources in the Gauntlet",
 		position = 1
 	)
-	String guideStyleSelection = "guideStyleSelection";
+	String resourceStyleSelection = "resourceStyleSelection";
 
 	@ConfigItem(
 		position = 0,
-		keyName = "showGuide",
-		name = "Show map guide",
-		description = "This will display guides to the rooms you choose",
-		section = guideStyleSelection
+		keyName = "showFishingSpots",
+		name = "Show fishing spots",
+		description = "This will display fishing spots on the map",
+		section = resourceStyleSelection
 	)
-	default boolean useGuide() { return false; }
+	default boolean showFishingSpots() { return true; }
 
 	@ConfigItem(
 		position = 1,
-		keyName = "guideRooms",
-		name = "Guide rooms",
-		description =
-			"Enter a list of room numbers (1-49 with 25 being the Hunllef) " +
-			"that you want guide markers for. For example, if you want to start by circling the Hunllef " +
-			"you would enter 17, 18, 19, 26, 33, 32, ",
-		section = guideStyleSelection
+		keyName = "showGrymLeaves",
+		name = "Show grym leaves",
+		description = "This will display grym leaves on the map",
+		section = resourceStyleSelection
 	)
-	default String guideRooms() { return ""; }
+	default boolean showGrymLeaves() { return true; }
 
 	@ConfigItem(
 		keyName = "showDemiBossLocations",
-		name = "Show Demi Boss Locations",
+		name = "Show demi boss locations",
 		description = "This will show where the demi bosses are located on the map"
 	)
 	default boolean showDemiBosses()
