@@ -50,13 +50,11 @@ public class GauntletMapSession
 	private Map<Integer, MapIcons> demiBossLocationsMap = new TreeMap<>();
 
 	@Getter
-	private Map<Integer, List<NodeGameObject>> highlightNodeMap = new TreeMap<>();
+	private Map<Integer, List<GameObject>> highlightNodeMap = new TreeMap<>();
 
-	private Map<Integer, List<Integer>> demiBossNodeLocationsMap = new TreeMap<>();
+	private Map<Integer, List<WorldPoint>> demiBossNodeLocationsMap = new TreeMap<>();
 
 	private Map<Integer, List<Integer>> roomResourcesMap = new TreeMap<>();
-
-	private List<Integer> activeRoomsList = new ArrayList<>();
 
 	@Getter
 	private Map<Integer, BufferedImage> gauntletMap;
@@ -148,23 +146,109 @@ public class GauntletMapSession
 					}
 				}
 
-				for (int nodeTiles = 0; nodeTiles <= 1; nodeTiles++)
+				for (Integer connectedRoom : plugin.getConnectedRoomsMap().get(room))
 				{
-					//North nodes
-					roomTiles.add(calculateNewPoint(centerTile, 0, 0, -2, 7 - nodeTiles));
-					roomTiles.add(calculateNewPoint(centerTile, 0, 0, 1, 7 - nodeTiles));
+					if (DEMI_ROOM_LIST.contains(connectedRoom))
+					{
+						switch (connectedRoom - room)
+						{
+							case -7:
+								//North
+								if (demiBossNodeLocationsMap.containsKey(room))
+								{
+									demiBossNodeLocationsMap.get(room).addAll(Lists.newArrayList(
+											calculateNewPoint(centerTile, 0, 0, -2, 7),
+											calculateNewPoint(centerTile, 0, 0, -2, 6),
+											calculateNewPoint(centerTile, 0, 0, 1, 7),
+											calculateNewPoint(centerTile, 0, 0, 1, 6)
+									));
+								}
+								else
+								{
+									demiBossNodeLocationsMap.put(
+											room,
+											Lists.newArrayList(
+													calculateNewPoint(centerTile, 0, 0, -2, 7),
+													calculateNewPoint(centerTile, 0, 0, -2, 6),
+													calculateNewPoint(centerTile, 0, 0, 1, 7),
+													calculateNewPoint(centerTile, 0, 0, 1, 6)
+											));
+								}
+								break;
 
-					//South nodes
-					roomTiles.add(calculateNewPoint(centerTile, 0, 0, -2, -7 - nodeTiles));
-					roomTiles.add(calculateNewPoint(centerTile, 0, 0, 1, -7 - nodeTiles));
+							case 7:
+								//South
+								if (demiBossNodeLocationsMap.containsKey(room))
+								{
+									demiBossNodeLocationsMap.get(room).addAll(Lists.newArrayList(
+											calculateNewPoint(centerTile, 0, 0, -2, -7),
+											calculateNewPoint(centerTile, 0, 0, -2, -8),
+											calculateNewPoint(centerTile, 0, 0, 1, -7),
+											calculateNewPoint(centerTile, 0, 0, 1, -8)
+									));
+								}
+								else
+								{
+									demiBossNodeLocationsMap.put(
+											room,
+											Lists.newArrayList(
+													calculateNewPoint(centerTile, 0, 0, -2, -7),
+													calculateNewPoint(centerTile, 0, 0, -2, -8),
+													calculateNewPoint(centerTile, 0, 0, 1, -7),
+													calculateNewPoint(centerTile, 0, 0, 1, -8)
+											));
+								}
+								break;
 
-					//East nodes
-					roomTiles.add(calculateNewPoint(centerTile, 0, 0, 7 - nodeTiles, 1));
-					roomTiles.add(calculateNewPoint(centerTile, 0, 0, 7 - nodeTiles, -2));
+							case 1:
+								//East
+								if (demiBossNodeLocationsMap.containsKey(room))
+								{
+									demiBossNodeLocationsMap.get(room).addAll(Lists.newArrayList(
+											calculateNewPoint(centerTile, 0, 0, 7, 1),
+											calculateNewPoint(centerTile, 0, 0, 6, 1),
+											calculateNewPoint(centerTile, 0, 0, 7, -2),
+											calculateNewPoint(centerTile, 0, 0, 6, -2)
+									));
+								}
+								else
+								{
+									demiBossNodeLocationsMap.put(
+											room,
+											Lists.newArrayList(
+													calculateNewPoint(centerTile, 0, 0, 7, 1),
+													calculateNewPoint(centerTile, 0, 0, 6, 1),
+													calculateNewPoint(centerTile, 0, 0, 7, -2),
+													calculateNewPoint(centerTile, 0, 0, 6, -2)
+											));
+								}
+								break;
 
-					//West nodes
-					roomTiles.add(calculateNewPoint(centerTile, 0, 0, -7 - nodeTiles, 1));
-					roomTiles.add(calculateNewPoint(centerTile, 0, 0, -7 - nodeTiles, -2));
+							case -1:
+								//West
+								if (demiBossNodeLocationsMap.containsKey(room))
+								{
+									demiBossNodeLocationsMap.get(room).addAll(Lists.newArrayList(
+											calculateNewPoint(centerTile, 0, 0, -7, 1),
+											calculateNewPoint(centerTile, 0, 0, -8, 1),
+											calculateNewPoint(centerTile, 0, 0, -7, -2),
+											calculateNewPoint(centerTile, 0, 0, -8, -2)
+									));
+								}
+								else
+								{
+									demiBossNodeLocationsMap.put(
+											room,
+											Lists.newArrayList(
+													calculateNewPoint(centerTile, 0, 0, -7, 1),
+													calculateNewPoint(centerTile, 0, 0, -8, 1),
+													calculateNewPoint(centerTile, 0, 0, -7, -2),
+													calculateNewPoint(centerTile, 0, 0, -8, -2)
+											));
+								}
+								break;
+						}
+					}
 				}
 
 				centerTileMap.put(room, centerTile);
@@ -190,42 +274,41 @@ public class GauntletMapSession
 
 	public Integer calculateActivatedRoom(WorldPoint player, WorldPoint target)
 	{
+		int difference = 0;
+
+		if (Math.abs(player.getY() - target.getY()) > Math.abs(player.getX() - target.getX()))
+		{
+			if (player.getY() > target.getY())
+			{
+				//North
+				difference = -7;
+			}
+			else
+			{
+				//South
+				difference = 7;
+			}
+		}
+		else
+		{
+			if (player.getX() > target.getX())
+			{
+				//East
+				difference = 1;
+			}
+			else
+			{
+				//West
+				difference = -1;
+			}
+		}
+
 		if (currentRoom == null)
 		{
 			currentRoom = 25;
 		}
 
-		return (currentRoom + calculateOrientation(player, target));
-	}
-
-	public Integer calculateOrientation(WorldPoint target, WorldPoint referencePoint)
-	{
-		if (Math.abs(target.getY() - referencePoint.getY()) > Math.abs(target.getX() - referencePoint.getX()))
-		{
-			if (target.getY() > referencePoint.getY())
-			{
-				//North
-				return -7;
-			}
-			else
-			{
-				//South
-				return 7;
-			}
-		}
-		else
-		{
-			if (target.getX() > referencePoint.getX())
-			{
-				//East
-				return 1;
-			}
-			else
-			{
-				//West
-				return -1;
-			}
-		}
+		return (currentRoom + difference);
 	}
 
 	public void updateCurrentRoom(WorldPoint playerLocation)
@@ -358,30 +441,17 @@ public class GauntletMapSession
 			case ObjectID.NODE_35999:
 			case ObjectID.NODE_36101:
 			case ObjectID.NODE_36102:
-				plugin.getConnectedRoomsMap().get(room).forEach(connectedRoom ->
+				demiBossNodeLocationsMap.forEach((roomKey, worldPoints) ->
 				{
-					if (activeRoomsList.contains(connectedRoom))
+					if (worldPoints.contains(gameObject.getWorldLocation()))
 					{
-						return;
-					}
-
-					if (DEMI_ROOM_LIST.contains(connectedRoom))
-					{
-						if (gameObject.getWorldLocation().distanceTo(player) == 3 || gameObject.getWorldLocation().distanceTo(player) == 4)
+						if (highlightNodeMap.containsKey(roomKey))
 						{
-							return;
+							highlightNodeMap.get(roomKey).add(gameObject);
 						}
-
-						if (connectedRoom - room == calculateOrientation(gameObject.getWorldLocation(), centerTileMap.get(room)))
+						else
 						{
-							if (highlightNodeMap.containsKey(room))
-							{
-								highlightNodeMap.get(room).add(new NodeGameObject(gameObject));
-							}
-							else
-							{
-								highlightNodeMap.put(room, Lists.newArrayList(new NodeGameObject(gameObject)));
-							}
+							highlightNodeMap.put(roomKey, Lists.newArrayList(gameObject));
 						}
 					}
 				});
@@ -414,13 +484,14 @@ public class GauntletMapSession
 			case ObjectID.NODE_35999:
 			case ObjectID.NODE_36101:
 			case ObjectID.NODE_36102:
-				if (roomTilesMap.get(currentRoom).contains(gameObject.getWorldLocation()))
+				demiBossNodeLocationsMap.forEach((roomKey, worldPoints) ->
 				{
-					if (highlightNodeMap.containsKey(currentRoom))
+					worldPoints.removeIf(o -> o.equals(gameObject.getWorldLocation()));
+					if (highlightNodeMap.containsKey(roomKey))
 					{
-						highlightNodeMap.get(currentRoom).removeIf(o -> o.getWorldLocation().equals(gameObject.getWorldLocation()));
+						highlightNodeMap.get(roomKey).removeIf(o -> o.getWorldLocation().equals(gameObject.getWorldLocation()));
 					}
-				}
+				});
 				break;
 		}
 	}
@@ -491,7 +562,6 @@ public class GauntletMapSession
 					currentRoom = null;
 					highlightNodeMap.clear();
 					demiBossLocationsMap.clear();
-					activeRoomsList.clear();
 					plugin.getPanel().clearPanel();
 					return;
 				}
@@ -500,7 +570,6 @@ public class GauntletMapSession
 				if (client.isInInstancedRegion() && !newSession)
 				{
 					int activatedRoom = calculateActivatedRoom(client.getLocalPlayer().getWorldLocation(), centerTileMap.get(currentRoom));
-					activeRoomsList.add(activatedRoom);
 					updateGauntletMap(activatedRoom, MapIcons.ACTIVE_TILE);
 				}
 				break;

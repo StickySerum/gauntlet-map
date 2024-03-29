@@ -29,6 +29,7 @@ import net.runelite.client.ui.overlay.OverlayPosition;
 import net.runelite.client.ui.overlay.OverlayUtil;
 import net.runelite.client.ui.overlay.components.ComponentOrientation;
 import net.runelite.client.ui.overlay.components.ImageComponent;
+import net.runelite.client.ui.overlay.components.InfoBoxComponent;
 import net.runelite.client.ui.overlay.components.PanelComponent;
 import net.runelite.client.ui.overlay.outline.ModelOutlineRenderer;
 
@@ -70,49 +71,27 @@ public class GauntletMapOverlay extends OverlayPanel
 			return null;
 		}
 
+		System.out.println("Bounds " + panelComponent.getBounds() + " " + panelComponent.getPreferredSize());
+
+		int tileSize = config.overlayTileSize();
+
 		int size = config.overlayTileSize() * 7;
 		panelComponent.setPreferredSize(new Dimension(size, size));
 
+
 		for (int i = 1; i <= 49; i++)
 		{
+			if (config.overlayTileSize() != tileSize)
+			{
+				return null;
+			}
+
 			panelComponent.getChildren().add(new ImageComponent(session.scaleImage(config.overlayTileSize(), session.getGauntletMap().get(i))));
 		}
 
 		float opacity = (float) config.overlayOpacityPercentage()/100;
 		graphics.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity));
 
-		highlightDemiBoss(graphics);
-
 		return super.render(graphics);
-	}
-
-	private void highlightDemiBoss(Graphics2D graphics)
-	{
-		if (session.getHighlightNodeMap() == null) {
-			return;
-		}
-
-		session.getHighlightNodeMap().forEach((room, nodeObjectList) ->
-		{
-			nodeObjectList.forEach(nodeGameObject ->
-			{
-				switch (nodeGameObject.getGameObject().getOrientation())
-				{
-					case 0:
-						modelOutlineRenderer.drawOutline(nodeGameObject.getGameObject(), 1, Color.BLUE, 1);
-						break;
-					case 512:
-						modelOutlineRenderer.drawOutline(nodeGameObject.getGameObject(), 1, Color.GREEN, 1);
-						break;
-					case 1024:
-						modelOutlineRenderer.drawOutline(nodeGameObject.getGameObject(), 1, Color.RED, 1);
-						break;
-					case 1536:
-						modelOutlineRenderer.drawOutline(nodeGameObject.getGameObject(), 1, Color.ORANGE, 1);
-						break;
-				}
-//				modelOutlineRenderer.drawOutline(gameObject, 1, Color.YELLOW, 1);
-			});
-		});
 	}
 }

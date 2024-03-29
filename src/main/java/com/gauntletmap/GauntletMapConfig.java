@@ -1,5 +1,6 @@
 package net.runelite.client.plugins.gauntletmap;
 
+import java.awt.*;
 import java.util.List;
 import net.runelite.client.config.Config;
 import net.runelite.client.config.ConfigGroup;
@@ -50,22 +51,6 @@ public interface GauntletMapConfig extends Config
 	@Range(min = 1, max = 100)
 	default int overlayOpacityPercentage() { return 100; }
 
-//	@ConfigSection(
-//		name = "Map guide options",
-//		description = "Settings for map guiding and highlighting in the Gauntlet",
-//		position = 2
-//	)
-//	String guideStyleSelection = "guideStyleSelection";
-
-//	@ConfigItem(
-//		position = 0,
-//		keyName = "showGuide",
-//		name = "Show map guide",
-//		description = "This will display guides to the rooms you choose",
-//		section = guideStyleSelection
-//	)
-//	default boolean useGuide() { return false; }
-
 	@ConfigSection(
 		name = "Resource display options",
 		description = "Settings for showing resources in the Gauntlet",
@@ -91,14 +76,44 @@ public interface GauntletMapConfig extends Config
 	)
 	default boolean showGrymLeaves() { return true; }
 
+	@ConfigSection(
+		name = "Demi boss options",
+		description = "How to display demi boss rooms",
+		position = 2
+	)
+	String demiBossStyleSelection = "demiBossStyleSelection";
+
 	@ConfigItem(
+		position = 1,
 		keyName = "showDemiBossLocations",
 		name = "Show demi boss locations",
-		description = "This will show where the demi bosses are located on the map"
+		description = "This will show where the demi bosses are located on the map",
+		section = demiBossStyleSelection
 	)
 	default boolean showDemiBosses()
 	{
 		return true;
 	}
+
+	@ConfigItem(
+		position = 2,
+		keyName = "demiBossOutlineColor",
+		name = "Outline color",
+		description = "Choose the color to outline demi boss nodes",
+		section = demiBossStyleSelection
+	)
+	default Color demiBossOutlineColor()
+	{
+		return Color.YELLOW;
+	}
+
+	@ConfigItem(
+			position = 3,
+			keyName = "demiBossOutlineSize",
+			name = "Outline size",
+			description = "The size of the outline",
+			section = demiBossStyleSelection
+	)
+	default int demiBossOutlineSize() { return 1; }
 
 }

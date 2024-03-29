@@ -60,7 +60,7 @@ public class GauntletMapPlugin extends Plugin
 	private GauntletMapOverlay mapOverlay;
 
 	@Inject
-	private GauntletMapGuide guideOverlay;
+	private DemiBossOverlay demiBossOverlay;
 
 	private Map<Integer, String> fileNameMap;
 
@@ -88,7 +88,7 @@ public class GauntletMapPlugin extends Plugin
 
 		overlayManager.add(mapOverlay);
 
-		overlayManager.add(guideOverlay);
+		overlayManager.add(demiBossOverlay);
 	}
 
 	@Override
