@@ -71,6 +71,8 @@ public class GauntletMapOverlay extends OverlayPanel
 			return null;
 		}
 
+		//forcing a change
+
 		System.out.println("Bounds " + panelComponent.getBounds() + " " + panelComponent.getPreferredSize());
 
 		int tileSize = config.overlayTileSize();
