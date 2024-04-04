@@ -1,4 +1,4 @@
-package net.runelite.client.plugins.gauntletmap;
+package com.gauntletmap;
 
 import com.google.common.collect.Lists;
 import java.awt.Image;
