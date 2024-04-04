@@ -1,2 +1,2 @@
 # Gauntlet Map
-A map of The Gauntlet that updates in real time without needing to open the map interface. It will show where the demi boss rooms are located on the map and display which demi boss spawned in which room.
+A real time map of the Gauntlet that displays in the plugin panel or as an overlay. It has options to show demi boss rooms, fishing spots and grym leaves on the map and highlights nodes for demi boss rooms.
