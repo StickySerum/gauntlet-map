@@ -80,6 +80,16 @@ public class GauntletMapSession
 		this.config = config;
 	}
 
+	private void stop()
+	{
+		newSession = true;
+		corrupted = false;
+		currentRoom = null;
+		highlightNodeMap.clear();
+		demiBossLocationsMap.clear();
+		plugin.getPanel().clearPanel();
+	}
+
 	public void createInstanceMaps(WorldPoint playerLocation)
 	{
 		WorldPoint northWestCornerRoom = null;
@@ -319,10 +329,10 @@ public class GauntletMapSession
 			return;
 		}
 
-//		if (roomTilesMap.get(25).contains(playerLocation))
-//		{
-//
-//		}
+		if (roomTilesMap.get(25).contains(playerLocation))
+		{
+			stop();
+		}
 
 		//Next room can only be connected to previous room -- Check connected rooms
 		plugin.getConnectedRoomsMap().get(currentRoom).forEach(connectedRoom ->
@@ -562,12 +572,7 @@ public class GauntletMapSession
 				//Reset session variables when leaving the instance
 				if (!client.isInInstancedRegion() && !newSession)
 				{
-					newSession = true;
-					corrupted = false;
-					currentRoom = null;
-					highlightNodeMap.clear();
-					demiBossLocationsMap.clear();
-					plugin.getPanel().clearPanel();
+					stop();
 					return;
 				}
 
