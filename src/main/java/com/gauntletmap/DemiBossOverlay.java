@@ -7,9 +7,6 @@ import javax.inject.Inject;
 import java.awt.*;
 
 public class DemiBossOverlay extends OverlayPanel {
-
-    private final GauntletMapPlugin plugin;
-
     private final GauntletMapConfig config;
 
     private final GauntletMapSession session;
@@ -22,7 +19,6 @@ public class DemiBossOverlay extends OverlayPanel {
         super(plugin);
         this.session = session;
         this.config = config;
-        this.plugin = plugin;
         this.modelOutlineRenderer = modelOutlineRenderer;
     }
 

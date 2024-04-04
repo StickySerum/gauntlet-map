@@ -12,7 +12,6 @@ import net.runelite.client.config.Units;
 @ConfigGroup("Gauntlet Map")
 public interface GauntletMapConfig extends Config
 {
-
 	@ConfigSection(
 		name = "Overlay display options",
 		description = "How the overlay is displayed on screen",
@@ -33,7 +32,7 @@ public interface GauntletMapConfig extends Config
 		position = 1,
 		keyName = "overlayTileSize",
 		name = "Overlay tile size",
-		description = "This allows you to change the overlay map tile size",
+		description = "This allows you to change the overlay map tile size -- manually adjust size with alt & mouse",
 		section = overlayStyleSection
 	)
 	@Units(Units.PIXELS)

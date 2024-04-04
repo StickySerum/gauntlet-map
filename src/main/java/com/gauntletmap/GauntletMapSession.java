@@ -319,6 +319,11 @@ public class GauntletMapSession
 			return;
 		}
 
+//		if (roomTilesMap.get(25).contains(playerLocation))
+//		{
+//
+//		}
+
 		//Next room can only be connected to previous room -- Check connected rooms
 		plugin.getConnectedRoomsMap().get(currentRoom).forEach(connectedRoom ->
 		{

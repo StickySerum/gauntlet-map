@@ -14,6 +14,7 @@ import net.runelite.api.events.GameStateChanged;
 import net.runelite.api.events.GameTick;
 import net.runelite.api.events.NpcDespawned;
 import net.runelite.api.events.NpcSpawned;
+import net.runelite.client.callback.ClientThread;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.plugins.Plugin;
@@ -62,6 +63,9 @@ public class GauntletMapPlugin extends Plugin
 	@Inject
 	private DemiBossOverlay demiBossOverlay;
 
+	@Inject
+	private ClientThread clientThread;
+
 	private Map<Integer, String> fileNameMap;
 
 	private Map<Integer, List<Integer>> connectedRoomsMap;
@@ -83,7 +87,7 @@ public class GauntletMapPlugin extends Plugin
 			.build();
 		
 		clientToolbar.addNavigation(navButton);
-		
+
 		createStartingMaps();
 
 		overlayManager.add(mapOverlay);
