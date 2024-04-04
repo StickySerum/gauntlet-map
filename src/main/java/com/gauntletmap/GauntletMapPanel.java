@@ -1,4 +1,4 @@
-package net.runelite.client.plugins.gauntletmap;
+package com.gauntletmap;
 
 import lombok.Getter;
 import net.runelite.client.ui.PluginPanel;
