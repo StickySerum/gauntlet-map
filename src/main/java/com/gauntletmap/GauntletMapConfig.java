@@ -32,7 +32,7 @@ public interface GauntletMapConfig extends Config
 		position = 1,
 		keyName = "overlayTileSize",
 		name = "Overlay tile size",
-		description = "This allows you to change the overlay map tile size -- manually adjust size with alt & mouse",
+		description = "(ALT + RIGHT CLICK TO FIX ANY SIZING PROBLEMS!) This allows you to change the overlay map tile size",
 		section = overlayStyleSection
 	)
 	@Units(Units.PIXELS)

@@ -43,7 +43,6 @@ public class GauntletMapOverlay extends OverlayPanel
 		}
 
 		int size = config.overlayTileSize() * 7;
-		setBounds(new Rectangle(size, size));
 		panelComponent.setPreferredSize(new Dimension(size, size));
 
 		for (int i = 1; i <= 49; i++)
