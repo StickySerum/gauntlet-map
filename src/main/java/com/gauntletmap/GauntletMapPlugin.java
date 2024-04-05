@@ -77,7 +77,7 @@ public class GauntletMapPlugin extends Plugin
 	{
 		this.panel = injector.getInstance(GauntletMapPanel.class);
 
-		BufferedImage icon = ImageUtil.loadImageResource(GauntletMapPlugin.class, "hunllef_icon.png");
+		BufferedImage icon = ImageUtil.loadImageResource(GauntletMapPlugin.class, "icon.png");
 		
 		navButton = NavigationButton.builder()
 			.tooltip("Gauntlet Map")
