@@ -26,7 +26,7 @@ public interface GauntletMapConfig extends Config
 		description = "This will display the map on the screen as an overlay",
 		section = overlayStyleSection
 	)
-	default boolean showOverlay() { return false; }
+	default boolean showOverlay() { return true; }
 
 	@ConfigItem(
 		position = 1,
