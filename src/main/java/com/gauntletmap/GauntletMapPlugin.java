@@ -99,6 +99,8 @@ public class GauntletMapPlugin extends Plugin
 	protected void shutDown() throws Exception
 	{
 		clientToolbar.removeNavigation(navButton);
+		overlayManager.remove(demiBossOverlay);
+		overlayManager.remove(mapOverlay);
 	}
 
 	@Subscribe
