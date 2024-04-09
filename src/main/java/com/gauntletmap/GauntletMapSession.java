@@ -87,6 +87,7 @@ public class GauntletMapSession
 		currentRoom = null;
 		highlightNodeMap.clear();
 		demiBossLocationsMap.clear();
+		roomResourcesMap.clear();
 		plugin.getPanel().clearPanel();
 	}
 
