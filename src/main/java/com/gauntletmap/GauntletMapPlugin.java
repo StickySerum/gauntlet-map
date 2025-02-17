@@ -17,6 +17,7 @@ import net.runelite.api.events.NpcSpawned;
 import net.runelite.client.callback.ClientThread;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
+import net.runelite.client.events.ConfigChanged;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.ui.ClientToolbar;
@@ -72,21 +73,23 @@ public class GauntletMapPlugin extends Plugin
 
 	private NavigationButton navButton;
 
+	private boolean isPanelDisplayed;
+
 	@Override
 	protected void startUp() throws Exception
 	{
 		this.panel = injector.getInstance(GauntletMapPanel.class);
 
 		BufferedImage icon = ImageUtil.loadImageResource(GauntletMapPlugin.class, "icon.png");
-		
+
 		navButton = NavigationButton.builder()
 			.tooltip("Gauntlet Map")
 			.icon(icon)
 			.priority(99)
 			.panel(panel)
 			.build();
-		
-		clientToolbar.addNavigation(navButton);
+
+		updatePanelDisplay();
 
 		createStartingMaps();
 
@@ -162,8 +165,24 @@ public class GauntletMapPlugin extends Plugin
 	}
 
 	@Subscribe
+	public void onConfigChanged(ConfigChanged event)
+	{
+		if (!event.getGroup().equals("Gauntlet Map"))
+		{
+			return;
+		}
+
+		if (event.getKey().equals("panelVisibility"))
+		{
+			updatePanelDisplay();
+		}
+	}
+
+	@Subscribe
 	public void onGameTick(GameTick gameTick)
 	{
+
+		updatePanelDisplay();
 
 		if (!client.isInInstancedRegion() || isNotInGauntlet())
 		{
@@ -280,6 +299,39 @@ public class GauntletMapPlugin extends Plugin
 			}
 		}
 		return true;
+	}
+
+	private boolean shouldDisplayPanel() {
+		switch (config.panelVisibility())
+		{
+			case NEVER:
+				return false;
+			case IN_GAUNTLET:
+				return !isNotInGauntlet();
+			case ALWAYS:
+			default:
+				return true;
+		}
+	}
+
+	private void updatePanelDisplay()
+	{
+		boolean shouldDisplayPanel = shouldDisplayPanel();
+		if (shouldDisplayPanel == isPanelDisplayed)
+		{
+			return;
+		}
+
+		if (shouldDisplayPanel)
+		{
+			isPanelDisplayed = true;
+			clientToolbar.addNavigation(navButton);
+		}
+		else
+		{
+			isPanelDisplayed = false;
+			clientToolbar.removeNavigation(navButton);
+		}
 	}
 
 	@Provides

@@ -1,7 +1,7 @@
 package com.gauntletmap;
 
 import java.awt.*;
-import java.util.List;
+
 import net.runelite.client.config.Config;
 import net.runelite.client.config.ConfigGroup;
 import net.runelite.client.config.ConfigItem;
@@ -13,9 +13,25 @@ import net.runelite.client.config.Units;
 public interface GauntletMapConfig extends Config
 {
 	@ConfigSection(
+			name = "General options",
+			description = "General plugin options",
+			position = 0
+	)
+	String generalOptionsSection = "generalOptionsSection";
+
+	@ConfigItem(
+			position = 0,
+			keyName = "panelVisibility",
+			name = "Sidebar panel",
+			description = "Choose when to display the map panel and button on the sidebar.",
+			section = generalOptionsSection
+	)
+	default PanelVisibilityOptions panelVisibility() { return PanelVisibilityOptions.ALWAYS; }
+
+	@ConfigSection(
 		name = "Overlay display options",
 		description = "How the overlay is displayed on screen",
-		position = 0
+		position = 1
 	)
 	String overlayStyleSection = "overlayStyleSection";
 
@@ -53,7 +69,7 @@ public interface GauntletMapConfig extends Config
 	@ConfigSection(
 		name = "Resource display options",
 		description = "Settings for showing resources in the Gauntlet",
-		position = 1
+		position = 2
 	)
 	String resourceStyleSelection = "resourceStyleSelection";
 
@@ -78,7 +94,7 @@ public interface GauntletMapConfig extends Config
 	@ConfigSection(
 		name = "Demi boss options",
 		description = "How to display demi boss rooms",
-		position = 2
+		position = 3
 	)
 	String demiBossStyleSelection = "demiBossStyleSelection";
 
@@ -114,5 +130,4 @@ public interface GauntletMapConfig extends Config
 			section = demiBossStyleSelection
 	)
 	default int demiBossOutlineSize() { return 1; }
-
 }
