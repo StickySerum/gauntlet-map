@@ -14,6 +14,8 @@ import net.runelite.api.events.GameStateChanged;
 import net.runelite.api.events.GameTick;
 import net.runelite.api.events.NpcDespawned;
 import net.runelite.api.events.NpcSpawned;
+import net.runelite.api.gameval.VarbitID;
+import net.runelite.api.events.VarbitChanged;
 import net.runelite.client.callback.ClientThread;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
@@ -198,6 +200,15 @@ public class GauntletMapPlugin extends Plugin
 		}
 
 		session.gameObjectDespawned(gameObjectDespawned.getGameObject());
+	}
+
+  @Subscribe
+	public void onVarbitChanged(VarbitChanged event)
+	{
+		if(event.getVarbitId() == VarbitID.GAUNTLET_BOSS_STARTED && event.getValue() == 1)
+		{
+			session.stop();
+		}
 	}
 
 	private void createStartingMaps()
