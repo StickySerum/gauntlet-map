@@ -202,7 +202,7 @@ public class GauntletMapPlugin extends Plugin
 		session.gameObjectDespawned(gameObjectDespawned.getGameObject());
 	}
 
-  @Subscribe
+	@Subscribe
 	public void onVarbitChanged(VarbitChanged event)
 	{
 		if(event.getVarbitId() == VarbitID.GAUNTLET_BOSS_STARTED && event.getValue() == 1)
