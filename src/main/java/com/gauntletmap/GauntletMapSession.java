@@ -80,7 +80,7 @@ public class GauntletMapSession
 		this.config = config;
 	}
 
-	private void stop()
+	public void stop()
 	{
 		newSession = true;
 		corrupted = false;
@@ -328,11 +328,6 @@ public class GauntletMapSession
 		if (roomTilesMap.get(currentRoom).contains(playerLocation))
 		{
 			return;
-		}
-
-		if (roomTilesMap.get(25).contains(playerLocation))
-		{
-			stop();
 		}
 
 		//Next room can only be connected to previous room -- Check connected rooms
