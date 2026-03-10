@@ -1,4 +1,4 @@
-package com.gauntletmap;
+package net.runelite.client.plugins.gauntletmap;
 
 import lombok.Getter;
 import net.runelite.client.ui.PluginPanel;
@@ -37,7 +37,7 @@ public class GauntletMapPanel extends PluginPanel
 			GridBagConstraints c = new GridBagConstraints();
 			c.fill = GridBagConstraints.HORIZONTAL;
 
-			for (int y = 0; y <= 6; y++)
+			for (int y = 6; y >= 0; y--)
 			{
 				for (int x = 0; x <= 6; x++)
 				{

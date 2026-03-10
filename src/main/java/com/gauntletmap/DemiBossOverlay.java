@@ -1,4 +1,4 @@
-package com.gauntletmap;
+package net.runelite.client.plugins.gauntletmap;
 
 import net.runelite.client.ui.overlay.OverlayPanel;
 import net.runelite.client.ui.overlay.outline.ModelOutlineRenderer;

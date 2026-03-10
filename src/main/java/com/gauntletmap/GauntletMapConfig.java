@@ -1,13 +1,8 @@
-package com.gauntletmap;
+package net.runelite.client.plugins.gauntletmap;
+
+import net.runelite.client.config.*;
 
 import java.awt.*;
-
-import net.runelite.client.config.Config;
-import net.runelite.client.config.ConfigGroup;
-import net.runelite.client.config.ConfigItem;
-import net.runelite.client.config.ConfigSection;
-import net.runelite.client.config.Range;
-import net.runelite.client.config.Units;
 
 @ConfigGroup("Gauntlet Map")
 public interface GauntletMapConfig extends Config
@@ -26,7 +21,7 @@ public interface GauntletMapConfig extends Config
 			description = "Choose when to display the map panel and button on the sidebar.",
 			section = generalOptionsSection
 	)
-	default PanelVisibilityOptions panelVisibility() { return PanelVisibilityOptions.ALWAYS; }
+	default GauntletMapEnums.PanelVisibilityOptions panelVisibility() { return GauntletMapEnums.PanelVisibilityOptions.ALWAYS; }
 
 	@ConfigSection(
 		name = "Overlay display options",
@@ -64,7 +59,7 @@ public interface GauntletMapConfig extends Config
 	)
 	@Units(Units.PERCENT)
 	@Range(min = 1, max = 100)
-	default int overlayOpacityPercentage() { return 100; }
+	default int overlayOpacityPercentage() { return 70; }
 
 	@ConfigSection(
 		name = "Resource display options",
