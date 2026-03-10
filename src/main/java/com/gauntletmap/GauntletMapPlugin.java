@@ -491,7 +491,7 @@ public class GauntletMapPlugin extends Plugin
             }
             catch (Exception e)
             {
-                System.out.println("ERROR: " + e);
+                throw new RuntimeException(e);
             }
 
             List<Integer> connectedRoomsList = new ArrayList<>();
