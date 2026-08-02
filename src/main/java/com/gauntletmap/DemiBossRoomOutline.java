@@ -6,7 +6,7 @@ import net.runelite.client.ui.overlay.outline.ModelOutlineRenderer;
 import javax.inject.Inject;
 import java.awt.*;
 
-public class DemiBossOverlay extends OverlayPanel {
+public class DemiBossRoomOutline extends OverlayPanel {
     private final GauntletMapConfig config;
 
     private final GauntletMapSession session;
@@ -14,7 +14,7 @@ public class DemiBossOverlay extends OverlayPanel {
     private final ModelOutlineRenderer modelOutlineRenderer;
 
     @Inject
-    private DemiBossOverlay(GauntletMapPlugin plugin, GauntletMapSession session, GauntletMapConfig config, ModelOutlineRenderer modelOutlineRenderer)
+    private DemiBossRoomOutline(GauntletMapPlugin plugin, GauntletMapSession session, GauntletMapConfig config, ModelOutlineRenderer modelOutlineRenderer)
     {
         super(plugin);
         this.session = session;
@@ -43,10 +43,26 @@ public class DemiBossOverlay extends OverlayPanel {
 
         session.getHighlightNodeMap().forEach((room, nodeObjectList) ->
         {
+//            if (GauntletMapConstants.GUARANTEED_DEMI_ROOM_LIST.contains(room))
+//            {
+//                nodeObjectList.forEach(nodeGameObject ->
+//                {
+//                    modelOutlineRenderer.drawOutline(nodeGameObject, config.guaranteedDemiBossOutlineSize(), config.guaranteedDemiBossOutlineColor(), 1);
+//                });
+//            }
+//            else
+//            {
+//                nodeObjectList.forEach(nodeGameObject ->
+//                {
+//                    modelOutlineRenderer.drawOutline(nodeGameObject, config.possibleDemiBossOutlineSize(), config.possibleDemiBossOutlineColor(), 1);
+//                });
+//            }
+
             nodeObjectList.forEach(nodeGameObject ->
             {
                 modelOutlineRenderer.drawOutline(nodeGameObject, config.demiBossOutlineSize(), config.demiBossOutlineColor(), 1);
             });
+
         });
     }
 }

@@ -28,10 +28,8 @@ public class GauntletMapSession
 
 	static final int BOSS_ROOM = 25;
 
-	static final List<Integer> DEMI_ROOM_LIST = List.of(3, 4, 5, 15, 21, 22, 28, 29, 35, 45, 46, 47);
-
     @Getter
-	private Map<Integer, GauntletMapEnums.MapIcons> demiBossLocationsMap = new TreeMap<>();
+	private Map<Integer, GauntletMapConstants.MapIcons> demiBossLocationsMap = new TreeMap<>();
 
 	@Getter
 	private Map<Integer, List<GameObject>> highlightNodeMap = new TreeMap<>();
@@ -156,7 +154,13 @@ public class GauntletMapSession
 				for (Integer connectedRoom : plugin.getConnectedRoomsMap().get(room))
 				{
 
-					if (DEMI_ROOM_LIST.contains(connectedRoom))
+                    List<Integer> demiList = GauntletMapConstants.DEMI_ROOM_LIST;
+
+                    if (config.showOnlyGuaranteedDemiBosses()) {
+                        demiList = GauntletMapConstants.GUARANTEED_DEMI_ROOM_LIST;
+                    }
+
+					if (demiList.contains(connectedRoom))
 					{
 						switch (connectedRoom - room)
 						{
@@ -308,10 +312,10 @@ public class GauntletMapSession
 				}
 				else
 				{
-					updateGauntletMap(previousRoom, GauntletMapEnums.MapIcons.ACTIVE_TILE);
+					updateGauntletMap(previousRoom, GauntletMapConstants.MapIcons.ACTIVE_TILE);
 				}
 
-				updateGauntletMap(currentRoom, GauntletMapEnums.MapIcons.PLAYER);
+				updateGauntletMap(currentRoom, GauntletMapConstants.MapIcons.PLAYER);
 			}
 
 		});
@@ -336,27 +340,27 @@ public class GauntletMapSession
             config.showFishingSpots() &&
             config.showGrymLeaves())
         {
-            updateGauntletMap(room, GauntletMapEnums.MapIcons.FISHING_SPOT_GRYM_ROOT);
+            updateGauntletMap(room, GauntletMapConstants.MapIcons.FISHING_SPOT_GRYM_ROOT);
         }
 
         else if (roomResourcesMap.get(room).contains(pond) || roomResourcesMap.get(room).contains(pondCG) && config.showFishingSpots())
         {
-            updateGauntletMap(room, GauntletMapEnums.MapIcons.FISHING_SPOT);
+            updateGauntletMap(room, GauntletMapConstants.MapIcons.FISHING_SPOT);
         }
 
         else if (roomResourcesMap.get(room).contains(herb) ||  roomResourcesMap.get(room).contains(herbCG) && config.showGrymLeaves())
         {
-            updateGauntletMap(room, GauntletMapEnums.MapIcons.GRYM_ROOT);
+            updateGauntletMap(room, GauntletMapConstants.MapIcons.GRYM_ROOT);
         }
 
         else
         {
-            updateGauntletMap(room, GauntletMapEnums.MapIcons.ACTIVE_TILE);
+            updateGauntletMap(room, GauntletMapConstants.MapIcons.ACTIVE_TILE);
         }
 
 	}
 
-	public void updateGauntletMap(Integer room, GauntletMapEnums.MapIcons icon)
+	public void updateGauntletMap(Integer room, GauntletMapConstants.MapIcons icon)
 	{
 
 		String path;

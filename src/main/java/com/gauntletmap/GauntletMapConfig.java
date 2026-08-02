@@ -21,7 +21,7 @@ public interface GauntletMapConfig extends Config
 			description = "Choose when to display the map panel and button on the sidebar.",
 			section = generalOptionsSection
 	)
-	default GauntletMapEnums.PanelVisibilityOptions panelVisibility() { return GauntletMapEnums.PanelVisibilityOptions.ALWAYS; }
+	default GauntletMapConstants.PanelVisibilityOptions panelVisibility() { return GauntletMapConstants.PanelVisibilityOptions.IN_GAUNTLET; }
 
 	@ConfigSection(
 		name = "Overlay display options",
@@ -96,8 +96,8 @@ public interface GauntletMapConfig extends Config
 	@ConfigItem(
 		position = 1,
 		keyName = "showDemiBossLocations",
-		name = "Show demi boss locations",
-		description = "This will show where the demi bosses are located on the map",
+		name = "Show demi boss rooms",
+		description = "This will show where the demi boss rooms are on the map",
 		section = demiBossStyleSelection
 	)
 	default boolean showDemiBosses()
@@ -105,10 +105,22 @@ public interface GauntletMapConfig extends Config
 		return true;
 	}
 
+    @ConfigItem(
+            position = 2,
+            keyName = "showGuaranteedDemiBossLocations",
+            name = "Show only guaranteed rooms",
+            description = "This will only show where the guaranteed demi bosses are located on the map",
+            section = demiBossStyleSelection
+    )
+    default boolean showOnlyGuaranteedDemiBosses()
+    {
+        return true;
+    }
+
 	@ConfigItem(
-		position = 2,
-		keyName = "demiBossOutlineColor",
-		name = "Outline color",
+		position = 3,
+		keyName = "demiBossRoomOutlineColor",
+		name = "Room outline color",
 		description = "Choose the color to outline demi boss nodes",
 		section = demiBossStyleSelection
 	)
@@ -118,9 +130,9 @@ public interface GauntletMapConfig extends Config
 	}
 
 	@ConfigItem(
-			position = 3,
+			position = 4,
 			keyName = "demiBossOutlineSize",
-			name = "Outline size",
+			name = "Room outline size",
 			description = "The size of the outline",
 			section = demiBossStyleSelection
 	)

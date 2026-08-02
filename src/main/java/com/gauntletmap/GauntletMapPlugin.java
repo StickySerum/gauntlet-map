@@ -55,7 +55,7 @@ public class GauntletMapPlugin extends Plugin
 	private GauntletMapOverlay mapOverlay;
 
 	@Inject
-	private DemiBossOverlay demiBossOverlay;
+	private DemiBossRoomOutline demiBossRoomOutline;
 
 	@Inject
 	private ClientThread clientThread;
@@ -63,8 +63,6 @@ public class GauntletMapPlugin extends Plugin
 	private Map<Integer, String> fileNameMap = new HashMap<>();
 
 	private Map<Integer, List<Integer>> connectedRoomsMap =  new HashMap<>();
-
-    private Map<Integer, Integer> roomFoundVarbitMap = new HashMap<>();
 
 	private NavigationButton navButton;
 
@@ -91,14 +89,14 @@ public class GauntletMapPlugin extends Plugin
 		createRequiredMapsAndLists();
 
 		overlayManager.add(mapOverlay);
-		overlayManager.add(demiBossOverlay);
+		overlayManager.add(demiBossRoomOutline);
 	}
 
 	@Override
 	protected void shutDown() throws Exception
 	{
 		clientToolbar.removeNavigation(navButton);
-		overlayManager.remove(demiBossOverlay);
+		overlayManager.remove(demiBossRoomOutline);
 		overlayManager.remove(mapOverlay);
 	}
 
@@ -130,7 +128,7 @@ public class GauntletMapPlugin extends Plugin
 
                 //Check if the npc has spawned before
 
-                GauntletMapSession.DEMI_ROOM_LIST.forEach(room ->
+                GauntletMapConstants.DEMI_ROOM_LIST.forEach(room ->
                 {
 
                     if (session.getRoomTilesMap().get(room).contains(npcSpawned.getNpc().getWorldLocation()))
@@ -144,24 +142,24 @@ public class GauntletMapPlugin extends Plugin
                                 case "crystalline bear":
                                 case "corrupted bear":
 
-                                    session.getDemiBossLocationsMap().put(session.getActivatedRoom(), GauntletMapEnums.MapIcons.DEMIBOSS_MELEE);
-                                    session.updateGauntletMap(session.getActivatedRoom(), GauntletMapEnums.MapIcons.DEMIBOSS_MELEE);
+                                    session.getDemiBossLocationsMap().put(session.getActivatedRoom(), GauntletMapConstants.MapIcons.DEMIBOSS_MELEE);
+                                    session.updateGauntletMap(session.getActivatedRoom(), GauntletMapConstants.MapIcons.DEMIBOSS_MELEE);
 
                                     break;
 
                                 case "crystalline dark beast":
                                 case "corrupted dark beast":
 
-                                    session.getDemiBossLocationsMap().put(session.getActivatedRoom(), GauntletMapEnums.MapIcons.DEMIBOSS_RANGED);
-                                    session.updateGauntletMap(session.getActivatedRoom(), GauntletMapEnums.MapIcons.DEMIBOSS_RANGED);
+                                    session.getDemiBossLocationsMap().put(session.getActivatedRoom(), GauntletMapConstants.MapIcons.DEMIBOSS_RANGED);
+                                    session.updateGauntletMap(session.getActivatedRoom(), GauntletMapConstants.MapIcons.DEMIBOSS_RANGED);
 
                                     break;
 
                                 case "crystalline dragon":
                                 case "corrupted dragon":
 
-                                    session.getDemiBossLocationsMap().put(session.getActivatedRoom(), GauntletMapEnums.MapIcons.DEMIBOSS_MAGIC);
-                                    session.updateGauntletMap(session.getActivatedRoom(), GauntletMapEnums.MapIcons.DEMIBOSS_MAGIC);
+                                    session.getDemiBossLocationsMap().put(session.getActivatedRoom(), GauntletMapConstants.MapIcons.DEMIBOSS_MAGIC);
+                                    session.updateGauntletMap(session.getActivatedRoom(), GauntletMapConstants.MapIcons.DEMIBOSS_MAGIC);
 
                                     break;
 
@@ -201,7 +199,7 @@ public class GauntletMapPlugin extends Plugin
                 if (demiBoss.isDead())
                 {
 
-                    for (Map.Entry<Integer, GauntletMapEnums.MapIcons> demiLocation : session.getDemiBossLocationsMap().entrySet())
+                    for (Map.Entry<Integer, GauntletMapConstants.MapIcons> demiLocation : session.getDemiBossLocationsMap().entrySet())
                     {
 
                         if (session.getRoomTilesMap().get(demiLocation.getKey()).contains(demiBoss.getWorldLocation()))
@@ -214,7 +212,7 @@ public class GauntletMapPlugin extends Plugin
 
                     if (session.getRoomTilesMap().get(room).contains(player))
                     {
-                        session.updateGauntletMap(room, GauntletMapEnums.MapIcons.PLAYER);
+                        session.updateGauntletMap(room, GauntletMapConstants.MapIcons.PLAYER);
                     }
 
                     else if (session.getRoomResourcesMap().get(room) != null)
@@ -224,7 +222,7 @@ public class GauntletMapPlugin extends Plugin
 
                     else
                     {
-                        session.updateGauntletMap(room, GauntletMapEnums.MapIcons.ACTIVE_TILE);
+                        session.updateGauntletMap(room, GauntletMapConstants.MapIcons.ACTIVE_TILE);
                     }
 
                 }
@@ -251,7 +249,7 @@ public class GauntletMapPlugin extends Plugin
                 //Clear when room is activated to prevent duplicate loading
                 session.getHighlightNodeMap().clear();
 
-                session.updateGauntletMap(session.getActivatedRoom(), GauntletMapEnums.MapIcons.ACTIVE_TILE);
+                session.updateGauntletMap(session.getActivatedRoom(), GauntletMapConstants.MapIcons.ACTIVE_TILE);
 
                 break;
 
@@ -461,7 +459,6 @@ public class GauntletMapPlugin extends Plugin
                 session.setCorrupted(event.getValue() == 1);
                 break;
 
-                //@@@@@@@@@@@@@@@@@@@@UPDATE THIS PROBABLY@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
             case VarbitID.GAUNTLET_BOSS_STARTED:
                 if (event.getValue() == 1)
                 {
@@ -471,9 +468,9 @@ public class GauntletMapPlugin extends Plugin
 
         }
 
-        if (playerInGauntlet && roomFoundVarbitMap.get(event.getVarbitId()) != null)
+        if (playerInGauntlet)
         {
-            session.setActivatedRoom(roomFoundVarbitMap.get(event.getVarbitId()));
+            session.setActivatedRoom(GauntletMapConstants.ROOM_FOUND_VARBIT_MAP.get(event.getVarbitId()));
         }
 
 	}
@@ -483,16 +480,6 @@ public class GauntletMapPlugin extends Plugin
 
 		for (int room = 1; room <= 49; room++)
 		{
-
-            try
-            {
-                int roomFoundVarbitId = VarbitID.class.getDeclaredField("GAUNTLET_ROOM_" + (room - 1) + "_FOUND").getInt(VarbitID.class);
-                roomFoundVarbitMap.put(roomFoundVarbitId, (room));
-            }
-            catch (Exception e)
-            {
-                throw new RuntimeException(e);
-            }
 
             List<Integer> connectedRoomsList = new ArrayList<>();
 
@@ -572,15 +559,20 @@ public class GauntletMapPlugin extends Plugin
 
         session.createInstanceMaps(client.getLocalPlayer().getWorldLocation());
 
-        session.updateGauntletMap(session.getStartLocation(), GauntletMapEnums.MapIcons.PLAYER);
-        session.updateGauntletMap(GauntletMapSession.BOSS_ROOM, GauntletMapEnums.MapIcons.BOSS);
+        session.updateGauntletMap(session.getStartLocation(), GauntletMapConstants.MapIcons.PLAYER);
+        session.updateGauntletMap(GauntletMapSession.BOSS_ROOM, GauntletMapConstants.MapIcons.BOSS);
 
         if (config.showDemiBosses())
         {
-            for (int i = 0; i <= GauntletMapSession.DEMI_ROOM_LIST.size() - 1; i++)
+            List<Integer> demiList = GauntletMapConstants.DEMI_ROOM_LIST;
+
+            if (config.showOnlyGuaranteedDemiBosses())
             {
-                session.updateGauntletMap(GauntletMapSession.DEMI_ROOM_LIST.get(i), GauntletMapEnums.MapIcons.DEMIBOSS_UNKNOWN);
+                demiList = GauntletMapConstants.GUARANTEED_DEMI_ROOM_LIST;
             }
+
+            demiList.forEach(room -> {session.updateGauntletMap(room, GauntletMapConstants.MapIcons.DEMIBOSS_UNKNOWN);});
+
         }
 
         //Start the map in the sidebar
