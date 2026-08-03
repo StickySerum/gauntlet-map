@@ -48,7 +48,7 @@ public interface GauntletMapConfig extends Config
 	)
 	@Units(Units.PIXELS)
 	@Range(min = 1, max = 34)
-	default int overlayTileSize() { return 26; }
+	default int overlayTileSize() { return 23; }
 
 	@ConfigItem(
 		position = 2,
